@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyector digital | Ajustes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main id="content" class="vbox center-box fit-content" style="--box-spacing:16px;">
+        <h3 class="center-text">Configuración de Puertos</h3>
+
+        <div class="grid-layout" style="--cols:3;">
+            <span style="--use-columns:2;" class="center-text">
+                Puerto del servidor local
+            </span>
+
+            <input id="local-server-port" type="number" class="center-text" step="1" min="1024" max="6535" placeholder="1024 - 6535">
+        </div>
+
+        <!-- <button>Habilitar permisos de conexión remota</button> -->
+        <!-- <button>Revocar permisos de conexión remota</button> -->
+
+        <h3 class="center-text">Carpetas multimedia</h3>
+
+        <div id="folders-container" style="--box-spacing:8px; max-height: 150px; height: 150px;" class="scroll-view vbox relative-position">
+            <span class="absolute-center dark-font empty" >No hay nada que mostrar aquí.</span>
+        </div>
+
+        <button onclick="window.electron.send('query-folders');" class="button-aspect">Añadir carpeta</button>
+    </main>
+
+
+    <div class="grid-layout" style="--cols:2;" id="back-buttons">
+        <a onclick="window.electron.send('set-settings', settings);" href="../index.html" class="button-aspect">Aceptar</a>
+        <a href="../index.html" class="button-aspect">Cancelar</a>
+
+    </div>
+
+    <script src="settings-window.js"></script>
+</body>
+</html>

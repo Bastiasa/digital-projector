@@ -1,0 +1,299 @@
+
+:root {
+
+    --background:#2e2e2e;
+    --primary-color:#3f51b5;
+
+    --dark-color:#4d4d4d;
+    --dark-color-font:#a6a6a6;
+}
+
+* {
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+*:not(.selectable) {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: var(--dark-color);
+    border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--dark-color-font);
+    border-radius: 10px;
+}
+
+input[type=range] {
+    accent-color: var(--primary-color);
+}
+
+html {
+    background-color: var(--background);
+}
+
+p, div, button, input, span, b, i {
+    font-size: 16px;
+}
+
+
+input[type=text],
+input[type=number],
+input[type=email],
+input[type=url] {
+    padding: 10px;
+    font-size: 16px;
+
+    background: none;
+    border: none;
+    border-bottom: 1.2px solid #626262;
+
+    transition: border-bottom 250ms ease;
+    transition-property: border-bottom, color;
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=email]:focus,
+input[type=url]:focus {
+    outline: none;
+    border-bottom: 2px solid #3f51b5;
+    color: #3f51b5;
+}
+
+input[type=checkbox] {
+    appearance: none;
+    background-color: gray;
+    border-radius: 6px;
+    display: block;
+
+    margin: 0 auto;
+    
+    aspect-ratio: 1;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    transition: background-color 300ms ease;
+
+}
+
+input[type=checkbox]:checked {
+    background-color:  var(--primary-color);
+    box-sizing: border-box;
+    background-position: 0 0;
+
+}
+
+input[type=checkbox]::before {
+    content: ' ';
+    background-image: url('/icons/check.svg');
+
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+    top: 100%;
+
+    transition: top 300ms ease;
+}
+
+input[type=checkbox]:checked::before {
+    top: 0;
+}
+
+button, .button-aspect {
+    background-color: #3f51b5;
+    font-size: 16px;
+    text-decoration: none;
+
+    text-align: center;
+
+    display: inline-block;
+    box-sizing: border-box;
+    
+    border-radius: 8px;
+    border: none;
+
+    padding: 8px;
+    cursor: pointer;
+
+    transition: background-color 250ms ease;
+    transition-property: background-color, color;
+}
+
+button:hover, .button-aspect:hover {
+    background-color: #5466ce;
+}
+
+button:disabled, .button-aspect:disabled {
+    background-color: #4d4d4d;
+    color: #a6a6a6;
+    cursor: unset;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.small {
+    font-size: small;
+    color: gray;
+}
+
+.center-text {
+    text-align: center;
+}
+
+.center-box {
+    width: calc(100% - 20px);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.fit-content > * {
+    width: 100%;
+}
+
+.vbox {
+    --spacing:14px;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing);
+}
+
+.vbox.jc-space-btwn {
+    justify-content: space-between;
+}
+
+.max-flex-grow {
+    flex-grow: 1;
+}
+
+.grid-layout {
+
+    --cols:2;
+    --spacing:10px;
+
+    display: grid;
+    box-sizing: border-box;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: auto;
+    gap: var(--spacing);
+}
+
+.grid-layout > * {
+    --use-columns:1;
+    --use-rows:1;
+
+    grid-column: span var(--use-columns);
+    grid-row: span var(--use-rows);
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.scroll-view {
+    display: inline-block;
+    overflow: auto;
+}
+
+.relative-position {
+    position: relative;
+}
+
+.absolute-center {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+.dark-font {
+    color: var(--dark-color-font);
+}
+
+.progress-bar {
+    border-radius: 1000px;
+    height: 20px;
+    background-color: gray;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar .progress-bar-fill {
+    background-color: var(--primary-color);
+    height: 100%;
+    width: 0;
+    box-sizing: border-box;
+    transition: width 200ms ease;
+}
+
+.popup {
+    position: fixed;
+    
+    top: 50%;
+    left: 50%;
+    
+    transform: translate(-50%, -50%) scale(1);
+    transition: opacity 200ms ease;
+    transition-property: opacity, transform;
+
+    background-color: var(--background);
+    z-index: 99;
+}
+
+.popup.hidden {
+    display: inherit !important;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.98);
+    opacity: 0;
+}
+
+.fill-width {
+    width: 100%;
+}
+
+.fill-height {
+    height: 100%;
+}
+
+.fill-size {
+    width: 100%;
+    height: 100%;
+}
+
+.border-box {
+    box-sizing: border-box;
+}
+
+.center-size {
+    width: 100%;
+    max-width: 500px;
+}
+
+.empty-prompt {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 70%;
+    color: gray;
+
+    font-size: small;
+    text-align: center;
+}

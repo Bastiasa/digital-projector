@@ -1,0 +1,65 @@
+@import url('../defaults.css');
+
+
+#content {
+    height: calc(100vh - 80px);
+    max-height:  calc(100vh - 80px);
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: 7px;
+}
+
+
+body {
+    margin: 0;
+}
+
+
+#back-buttons {
+    position: absolute;
+
+    box-sizing: border-box;
+    height: 40px;
+
+    left: 50%;
+    bottom: 15px;
+
+    width: calc(100% - 30px);
+    max-width: 300px;
+
+    transform: translateX(-50%);
+}
+
+.folder {
+    display: flex;
+}
+
+.folder .path {
+    display: inline-block;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+
+    flex-grow: 1;
+
+    width: 75%;
+    height: 100%;
+
+    margin-right: 10px;
+
+    box-sizing: border-box;
+}
+
+.folder .delete-button {
+    
+    width: auto;
+    height: 100%;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+    object-fit: contain;
+
+    aspect-ratio: 1;
+}

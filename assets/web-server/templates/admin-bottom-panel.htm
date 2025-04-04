@@ -1,0 +1,26 @@
+<div id="bottom-panel">
+
+    <div id="current-media-info-container" class="hidden">
+        <span id="current-media-name"></span>
+        <img id="quit-current-media-button" class="button" src="/icons/close.svg" alt="_new">
+    </div>
+
+    <div id="volume-manager">
+        <input type="range" min="0" max="1" step="0.01" id="volume-range-input">
+        <img id="volume-icon" src="/icons/volume_up.svg" alt="_new">
+    </div>
+
+    <div id="time-manager">
+        <input type="range" min="0" step="0.001" max="1" id="current-time-range-input">
+
+        <div>
+            <input type="text" autocomplete="off" id="current-time-text" value="00:00">
+            <span type="text" autocomplete="off" id="duration-text">/  00:00</span>
+        </div>
+
+        <img id="prev-button" onclick="prevButton();" class="button" src="/icons/skip_previous.svg" alt="_new" tabindex="0">
+        <img id="play-button" class="button" src="/icons/play_arrow.svg" alt="_new" tabindex="0">
+        <img id="next-button" onclick="nextButton();" class="button" src="/icons/skip_next.svg" alt="_new" tabindex="0">
+    </div>
+
+</div>
