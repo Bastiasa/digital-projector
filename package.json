@@ -1,43 +1,52 @@
 {
-  "name": "proyector-digital",
-  "version": "1.0.0",
-  "description": "Para proyectar contenido de forma profesional.",
-  "main": "main.js",
+  "name": "digital-projector",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "author": {
+    "name": "Luis Bastidas",
+    "email": "leysantqm@gmail.com",
+    "url": "https://bastiasa.github.io"
+  },
   "scripts": {
-    "test": "electron .",
-    "build": "electron-builder"
-  },
-  "author": "Bastiasa Studios",
-  "license": "ISC",
-  "devDependencies": {
-    "electron": "^31.2.1",
-    "electron-builder": "^24.13.3"
-  },
-  "build": {
-    "appId": "com.bastiasa.digital.projector",
-    "productName": "Proyector Digital",
-    "win": {
-      "icon": "assets/media/icon.ico",
-      "target": "nsis"
-    },
-    "extraResources": [
-      {
-        "from": "assets",
-        "to": "assets"
-      },
-      {
-        "from": "servers.exe",
-        "to": "servers.exe"
-      },
-      {
-        "from":"stop_servers.ps1",
-        "to":"../stop_servers.ps1"
-      }
-    ]
+    "dev:ui": "vite",
+    "dev:electron": "npm run build:electron && electron . --disable-vulkan --ozone-platform=x11",
+    "dev": "cross-env ENV_MODE=development npm-run-all -p dev:ui dev:electron",
+    "build:ui": "tsc -b && vite build",
+    "build:electron": "tsc -p ./src/electron/",
+    "build": "npm-run-all -p build:ui build:electron",
+
+    "dist:linux":"npm run build && electron-builder build -l",
+    "!dist:linux":"electron-builder build -l",
+
+    "dist:win":"npm run build && electron-builder build -w",
+    "!dist:win":"electron-builder build -w",
+    
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "openurl": "^1.1.1",
-    "qrcode": "^1.5.3",
-    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "electron": "^43.2.0",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "cross-env": "^10.1.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^10.8.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.7.0",
+    "npm-run-all": "^4.1.5",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.65.0",
+    "vite": "^8.2.0"
   }
 }
