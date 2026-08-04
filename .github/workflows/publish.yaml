@@ -4,37 +4,27 @@ on:
 name: Publish release
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
 
-    release:
-        runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-        steps:
-            - uses: actions/checkout@v4
+      - run: npm install
 
-            -
-                name: Install dependencies
-                run: npm install
-        
-            -
-                name: Build for Linux
-                run: npm run dist:linux
+      - run: npm run dist:linux
+      - run: npm run dist:win
 
-            - 
-                name: Build for Windows
-                run: npm run dist:win
+      - name: Get version
+        run: |
+          echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
-            -
-                name: Get version
-                run:
-                    echo VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
-            
-            -
-                name: Create release
-                env:
-                    GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                run: |
-                    
-                    gh release create $VERSION \
-                    release.zip \
-                    --title "v$VERSION" \
-                    --generate-notes
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v$VERSION" \
+            dist/*.exe \
+            dist/*.AppImage \
+            --title "v$VERSION" \
+            --generate-notes

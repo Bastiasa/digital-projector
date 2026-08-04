@@ -16,11 +16,13 @@
 
     "linux": {
         "icon": "icons/icon.png",
-        "target": "AppImage"
+        "target": "AppImage",
+        "artifactName": "Dp-Linux-${version}.AppImage"
     },
     
     "win": {
         "target": "nsis",
-        "icon": "icons/icon.ico"
+        "icon": "icons/icon.ico",
+        "artifactName": "Dp-Win-${version}.exe"
     }
 }
