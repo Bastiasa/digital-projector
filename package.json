@@ -22,7 +22,10 @@
     "build:electron": "tsc -p ./src/electron/",
     "build:website": "cd packages/website && npm run build",
     "build:shared": "cd packages/shared && npm run build",
-    "build": "npm-run-all -p build:ui build:electron build:preload build:website build:shared",
+    
+    "build:monorepo":"npm run build:shared && npm run build:website",
+    
+    "build": "npm run build:monorepo && npm-run-all -p build:ui build:electron build:preload",
     
     "dist:linux": "npm run build && electron-builder build -l  --publish never",
     "only:dist:linux": "electron-builder build -l --publish never",
