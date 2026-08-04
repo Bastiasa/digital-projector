@@ -11,9 +11,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - run: npm install
+      
+      - run: npm run build
 
-      - run: npm run dist:linux
-      - run: npm run dist:win
+      - run: npm run only:dist:linux
+      - run: npm run only:dist:win
 
       - name: Get version
         run: |
