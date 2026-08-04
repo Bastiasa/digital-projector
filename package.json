@@ -33,7 +33,7 @@
 
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "npx playwright test tests/main.test.js"
+    "test": "vitest test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
