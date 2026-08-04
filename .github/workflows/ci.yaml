@@ -9,33 +9,52 @@ name: Build & Test Application
 
 
 jobs:
-    
-    main:
+
+
+    build-linux:
 
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkcout@v4
 
             - 
                 name: Install dependencies
                 run: npm install
-            
 
             -
-                name: Build project
+                name: Build packages
                 run: npm run build
 
             -
                 name: Run tests
                 run: npx vitest test
-            
+
             -
-                name: Run linux build
+                name: Build executable
                 run: npm run only:dist:linux
-            
+
+    build-win:
+
+        runs-on: windows-latest
+
+        steps:
+            - uses: actions/checkcout@v4
+
+            - 
+                name: Install dependencies
+                run: npm install
+
             -
-                name: Run win build
+                name: Build packages
+                run: npm run build
+
+            -
+                name: Run tests
+                run: npx vitest test
+
+            -
+                name: Build executable
                 run: npm run only:dist:win
 
             
