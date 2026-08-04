@@ -1,21 +1,59 @@
 on:
-    workflow_dispatch: 
+  workflow_dispatch:
 
 name: Publish release
 
 jobs:
-  release:
+  release-linux:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - run: npm install
-      
-      - run: npm run build
 
-      - run: npm run only:dist:linux
-      - run: npm run only:dist:win
+      - run: npm run dist:linux
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: dist/*.AppImage
+
+  release-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm install
+
+      - run: npm run dist:win
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: dist/*.exe
+
+  create-release:
+    needs:
+      - release-linux
+      - release-windows
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*-build"
+          merge-multiple: true
+          path: dist
 
       - name: Get version
         run: |
