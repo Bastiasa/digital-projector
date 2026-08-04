@@ -3,6 +3,10 @@ on:
 
 name: Publish release
 
+permissions:
+    contents:
+        write
+
 jobs:
   release-linux:
     runs-on: ubuntu-latest
