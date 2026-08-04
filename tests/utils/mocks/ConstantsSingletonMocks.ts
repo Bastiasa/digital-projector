@@ -6,7 +6,7 @@ import {vi} from 'vitest';
 import { ensureFolder } from "../ensureFolder.ts";
 
 
-export const ConstantsSignletonMocks = () => {
+export const ConstantsSingletonMocks = () => {
     ensureCacheFolder();
     vi.mock('electron', () => ({
         app: {

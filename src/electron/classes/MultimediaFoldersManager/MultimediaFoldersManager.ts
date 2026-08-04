@@ -24,7 +24,7 @@ export type FolderFile = {
 
 export class MultiFoldersManager {
 
-    private readonly FOLDER_ID_KEY = "IDS.MULTIMEDIA_FOLDERS_MANAGER";
+    public readonly FOLDER_ID_KEY = "IDS.MULTIMEDIA_FOLDERS_MANAGER";
 
     private folders: Map<number, string> = new Map();
 

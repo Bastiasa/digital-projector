@@ -1,12 +1,12 @@
 import type { MediaIndex } from '@/electron/classes/MultimediaFoldersManager/MediaIndex.ts';
-import { ConstantsSignletonMocks } from '../utils/mocks/ConstantsSignletonMocks.ts';
+import { ConstantsSingletonMocks } from '../utils/mocks/ConstantsSingletonMocks.ts';
 
-ConstantsSignletonMocks();
+ConstantsSingletonMocks();
 
 import { MultiFoldersManager } from '@/electron/classes/MultimediaFoldersManager/MultimediaFoldersManager.ts';
 import {vi, it, describe, expect} from 'vitest';
 import { join } from 'path';
-import { makeSha256 } from '@/electron/utils/makeSha256.ts';
+import { DataManager } from '@/electron/singletons/dataManager.ts';
 
 const EXAMPLE_FOLDER_PATH = join(
     __dirname,
@@ -106,21 +106,23 @@ describe("MultimediaFoldersManager", () => {
         
         expect(pick).toHaveBeenCalledWith(null);
 
-        expect(addFiles).toHaveBeenLastCalledWith(
+        const folderId = DataManager.get(manager.FOLDER_ID_KEY, 1);
+
+        expect(addFiles).toHaveBeenCalledWith(
             {
-                folderId: 2,
+                folderId: folderId,
                 fileName: "a.png",
                 id: expect.any(String)
             },
 
             {
-                folderId: 2,
+                folderId: folderId,
                 fileName: "b.png",
                 id: expect.any(String)
             });
 
         
-        expect(manager.getFolderFiles(2)).toStrictEqual([
+        expect(manager.getFolderFiles(folderId)).toStrictEqual([
             {
                 fileName: 'a.png',
                 id: expect.any(String)

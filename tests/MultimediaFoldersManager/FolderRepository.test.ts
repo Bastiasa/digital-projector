@@ -1,5 +1,5 @@
-import { ConstantsSignletonMocks } from "../utils/mocks/ConstantsSignletonMocks.ts";
-ConstantsSignletonMocks();
+import { ConstantsSingletonMocks } from "../utils/mocks/ConstantsSingletonMocks.ts";
+ConstantsSingletonMocks();
 
 
 import {expect, describe, it} from 'vitest';
