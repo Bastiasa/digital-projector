@@ -106,17 +106,17 @@ describe("MultimediaFoldersManager", () => {
         
         expect(pick).toHaveBeenCalledWith(null);
 
-        const folderId = DataManager.get(manager.FOLDER_ID_KEY, 1);
+        const folderId = DataManager.get<number>(manager.FOLDER_ID_KEY, 1) ?? 1;
 
         expect(addFiles).toHaveBeenCalledWith(
             {
-                folderId: folderId,
+                folderId,
                 fileName: "a.png",
                 id: expect.any(String)
             },
 
             {
-                folderId: folderId,
+                folderId,
                 fileName: "b.png",
                 id: expect.any(String)
             });
