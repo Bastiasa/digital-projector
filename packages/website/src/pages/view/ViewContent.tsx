@@ -200,8 +200,7 @@ export function ViewContent() {
         if (contentType === "audio") {
             return <AudioContent socket={socket} />;
         }
-
-        return <div>Loading...</div>;
+        
     }, [contentType]);
 
     return (
