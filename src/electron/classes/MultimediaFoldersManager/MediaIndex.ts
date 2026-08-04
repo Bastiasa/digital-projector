@@ -19,7 +19,7 @@ export class MediaIndex {
         });
     }
 
-    addFiles(...files:FolderFile[]) {
+    addFiles(files:FolderFile[]) {
         for (const file of files) {
             this.addFile(file);
         }

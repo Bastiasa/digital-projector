@@ -1,5 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { MediaIndex } from '@/electron/classes/MultimediaFoldersManager/MediaIndex.ts';
+import { createMocks } from '../utils/createMocks.ts';
+
+export const MediaIndexMock = () => createMocks(
+    'getPreviousId',
+    'getNextId',
+    'addFiles',
+    'addFile',
+    'removeFolder',
+    'getFilePath'
+);
 
 describe('MediaIndex', () => {
 
@@ -7,7 +17,7 @@ describe('MediaIndex', () => {
 
         const index = new MediaIndex();
 
-        index.addFiles(
+        index.addFiles([
             {
                 id: 'a',
                 fileName: 'video.mp4',
@@ -23,7 +33,7 @@ describe('MediaIndex', () => {
                 fileName: 'audio.mp3',
                 folderId: 1
             }
-        );
+        ]);
 
         expect(index.getNextId('a')).toBe('b');
         expect(index.getNextId('b')).toBe('c');
@@ -35,7 +45,7 @@ describe('MediaIndex', () => {
 
         const index = new MediaIndex();
 
-        index.addFiles(
+        index.addFiles([
             {
                 id: 'a',
                 fileName: 'video.mp4',
@@ -51,7 +61,7 @@ describe('MediaIndex', () => {
                 fileName: 'audio.mp3',
                 folderId: 1
             }
-        );
+        ]);
 
         expect(index.getPreviousId('a')).toBe('c');
         expect(index.getPreviousId('b')).toBe('a');

@@ -47,7 +47,7 @@ export class MultiFoldersManager {
 
                 if (files) {
                     this.index.addFiles(
-                        ...files.map(sFile=>({
+                        files.map(sFile=>({
                             folderId,
                             ...sFile,
                         }))
@@ -84,39 +84,40 @@ export class MultiFoldersManager {
 
         logInfo(`User selected folder: ${selectedFolder}`);
 
-        if (selectedFolder) {
-
-            if (this.alreadyHas(selectedFolder)) {
-                logWarn(`Folder ${selectedFolder} was already registered.`);
-                return;
-            }
-
-            const id = DataManager.getNextId(this.FOLDER_ID_KEY);
-
-            logInfo(`Folder id: ${id}.`);
-
-            this.folders.set(
-                id,
-                selectedFolder
-            );
-
-            const folderFiles = 
-                this.scanner.getFiles(selectedFolder)
-                    .map((f)=>({
-                        ...f,
-                        folderId: id
-                    }));
-
-            this.repository.save(this.folders);
-            this.index.addFiles(...folderFiles);
-
-            return {
-                folder: selectedFolder,
-                id
-            };
+        if (!selectedFolder) {
+            return;
+        }
+        
+        if (this.alreadyHas(selectedFolder)) {
+            logWarn(`Folder ${selectedFolder} was already registered.`);
+            return;
         }
 
-        return undefined;
+        const id = DataManager.getNextId(this.FOLDER_ID_KEY);
+
+        logInfo(`Folder id: ${id}.`);
+
+        this.folders.set(
+            id,
+            selectedFolder
+        );
+
+        const folderFiles = 
+            this.scanner.getFiles(selectedFolder)
+                .map((f)=>({
+                    ...f,
+                    folderId: id
+                }));
+
+        logInfo("Folder files: ", folderFiles);
+
+        this.repository.save(this.folders);
+        this.index.addFiles(folderFiles);
+
+        return {
+            folder: selectedFolder,
+            id
+        };
     }
 
     public async removeFolder(id: number) {

@@ -4,9 +4,10 @@ import { ConstantsSingletonMocks } from '../utils/mocks/ConstantsSingletonMocks.
 ConstantsSingletonMocks();
 
 import { MultiFoldersManager } from '@/electron/classes/MultimediaFoldersManager/MultimediaFoldersManager.ts';
-import {vi, it, describe, expect} from 'vitest';
+import {vi, it, describe, expect, beforeEach} from 'vitest';
 import { join } from 'path';
 import { DataManager } from '@/electron/singletons/dataManager.ts';
+import { MediaIndexMock } from './MediaIndex.test.ts';
 
 const EXAMPLE_FOLDER_PATH = join(
     __dirname,
@@ -15,13 +16,31 @@ const EXAMPLE_FOLDER_PATH = join(
 
 describe("MultimediaFoldersManager", () => {
 
+    let manager!: MultiFoldersManager;
+    let index!: ReturnType<typeof MediaIndexMock>;
+    let picker!: MockedObj<'pick'>;
 
-    const manager = new MultiFoldersManager();
+    beforeEach(() => {
+        index = MediaIndexMock();
 
-    const folders = manager.getFolders();
-    folders.set(99, "EmptyFolder");
+        picker = {
+            pick: vi.fn()
+        };
+
+        manager = new MultiFoldersManager(
+            index as any,
+            undefined,
+            undefined,
+            picker
+        );
+
+        
+    });
 
     it('duplicates folders map', ()=>{
+        const folders = manager.getFolders();
+        folders.set(99, "EmptyFolder");
+        
         expect(manager.getFolders().has(99)).toBeFalsy();
     });
 
@@ -39,21 +58,9 @@ describe("MultimediaFoldersManager", () => {
 
 
     it('delegates previous & next id lookup', () => {
-        const getPreviousId = vi.fn();
-        const getNextId = vi.fn();
 
-        const manager = new MultiFoldersManager(
-            {
-                getPreviousId,
-                getNextId,
-                addFiles: vi.fn(),
-                removeFolder: vi.fn(),
-                getFilePath: vi.fn(),
-            } as unknown as MediaIndex
-        );
-
-        getPreviousId.mockReturnValue('prev');
-        getNextId.mockReturnValue('next');
+        index.getPreviousId.mockReturnValue('prev');
+        index.getNextId.mockReturnValue('next');
 
         expect(
             manager.getPreviousIdFileFrom('current')
@@ -63,52 +70,32 @@ describe("MultimediaFoldersManager", () => {
             manager.getNextIdFileFrom('current')
         ).toBe('next');
 
-        expect(getPreviousId).toHaveBeenCalledWith('current');
-        expect(getNextId).toHaveBeenCalledWith('current');
+        expect(index.getPreviousId).toHaveBeenCalledWith('current');
+        expect(index.getNextId).toHaveBeenCalledWith('current');
     });
 
     it('removes folder from index', async () => {
-        
-        const removeFolder = vi.fn();
-
-        const manager = new MultiFoldersManager(
-            {
-                removeFolder
-            } as any
-        );
 
         await manager.removeFolder(10);
 
-        expect(removeFolder)
+        expect(index.removeFolder)
             .toHaveBeenCalledWith(10);
     });
 
-    it('picks a folder and inserts its files', () => {
+    it('picks a folder and inserts its files', async () => {
 
-        const addFiles = vi.fn();
-        const pick = vi.fn();
-
-        const manager = new MultiFoldersManager(
-            {
-                addFiles
-            } as any,
-            undefined,
-            undefined,
-            {
-                pick
-            } as any
-        );
-
-        pick.mockReturnValue(EXAMPLE_FOLDER_PATH);
+        picker.pick.mockReturnValue(EXAMPLE_FOLDER_PATH);
 
 
-        manager.pickFolder(null as any);
+        await manager.pickFolder(null as any);
         
-        expect(pick).toHaveBeenCalledWith(null);
+        expect(picker.pick).toHaveBeenCalledWith(null);
 
-        const folderId = DataManager.get<number>(manager.FOLDER_ID_KEY, 1) ?? 1;
+        const folderId = DataManager.get<number>(manager.FOLDER_ID_KEY, 0) ?? 0;
 
-        expect(addFiles).toHaveBeenCalledWith(
+        console.log("Folder ID", folderId)
+
+        expect(index.addFiles).toHaveBeenCalledWith([
             {
                 folderId,
                 fileName: "a.png",
@@ -119,7 +106,8 @@ describe("MultimediaFoldersManager", () => {
                 folderId,
                 fileName: "b.png",
                 id: expect.any(String)
-            });
+            }
+        ]);
 
         
         expect(manager.getFolderFiles(folderId)).toStrictEqual([
