@@ -24,13 +24,13 @@
     "build:shared": "cd packages/shared && npm run build",
     "build": "npm-run-all -p build:ui build:electron build:preload build:website build:shared",
     
-    "dist:linux": "npm run build && electron-builder build -l",
-    "only:dist:linux": "electron-builder build -l",
+    "dist:linux": "npm run build && electron-builder build -l  --publish never",
+    "only:dist:linux": "electron-builder build -l --publish never",
 
 
-    "dist:win": "npm run build && electron-builder build -w",
+    "dist:win": "npm run build && electron-builder build -w  --publish never",
     "only:dist:win": "electron-builder build -w",
-    
+
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "npx playwright test tests/main.test.js"
