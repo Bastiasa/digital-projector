@@ -14,6 +14,7 @@ node_modules
 dist
 dist-electron
 dist-ui
+dist-website
 dist-ssr
 *.local
 

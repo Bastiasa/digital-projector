@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Main project",
+			"path": "."
+		},
+		{
+			"name": "Website",
+			"path": "./packages/website"
+		}
+	],
+	"settings": {}
+}

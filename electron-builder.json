@@ -4,15 +4,23 @@
     "productName": "Digital Projector",
     "artifactName": "dp.${ext}",
 
+
     "asar": false,
 
     "files": [
+        "dist-website/**/*",
         "dist-electron/**/*",
         "dist-ui/**/*",
         "assets/**/*"
     ],
 
     "linux": {
+        "icon": "icons/icon.png",
         "target": "AppImage"
+    },
+    
+    "win": {
+        "target": "nsis",
+        "icon": "icons/icon.ico"
     }
 }

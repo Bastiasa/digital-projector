@@ -5,10 +5,17 @@
         "target": "esnext",
         "outDir": "../../dist-electron",
         "rootDir": ".",
-
         "lib": [
             "ESNext",
             "DOM"
-        ]
-    }
+        ],
+        "strict": true,
+        "erasableSyntaxOnly": false
+    },
+    "include": [
+        "./",
+        "../bridge.d.ts",
+        "../../packages/shared/src/globalConstants.d.ts",
+        "../classes/multimediaFoldersManager/multimediaFoldersManager.ts"
+    ]
 }
