@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { useSocket } from "../../hooks/useSocket";
-import type { Socket } from "socket.io-client";
 import { usePlaybackManagerContext } from "../../context/PlaybackManagerContext";
+import { useViewerContext } from "./ViewerContext";
 
 
 
@@ -25,7 +24,115 @@ const PictureContent = () => {
         alt="" />;
 };
 
-const AudioContent = ({socket}: {socket:Socket|null}) => {
+const PlayableContent = ({type}:{type:'audio'|'video'}) => {
+
+
+    type HTMLPlayableElement = HTMLVideoElement|HTMLAudioElement;
+
+    const {currentFileId, currentTime, pause, volume} = usePlaybackManagerContext();
+    const {socket, remoteUpdate} = useViewerContext();
+
+    const elementRef = useRef<HTMLPlayableElement>(null)
+
+    const onlyIfExists = (action:(element:HTMLPlayableElement)=>(()=>void)|undefined) => {
+        if (elementRef.current) {
+            return action(elementRef.current);
+        }
+    }
+
+    const source = `/file/${currentFileId}`
+
+    useEffect(()=> {
+        console.log("CURRENT SOURCE:", currentFileId);
+    }, [currentFileId]);
+
+
+    const remoteUpdateCurrentTime = (time: number) => remoteUpdate({currentTime: time});
+
+
+    useEffect(()=>{
+        return onlyIfExists(element=>{
+            //@ts-ignore
+            window.PLAYABLE_ELEMENT = element;
+
+            if (pause) {
+                element.pause();
+                remoteUpdateCurrentTime(element.currentTime);
+
+            } else {
+                element.play();
+
+                const interval = setInterval(()=> {
+                    if (element.paused) {
+                        return;
+                    }
+
+                    remoteUpdateCurrentTime(element.currentTime);
+                }, 1000);
+
+                return () => {
+                    clearInterval(interval);
+                }
+            }
+
+        });
+    }, [pause, currentFileId, socket]);
+
+    useEffect(()=>{
+        onlyIfExists(element=>{
+            element.currentTime = currentTime;
+        });
+    }, [currentTime]);
+
+    useEffect(()=>{
+        onlyIfExists(element=>{
+            element.volume = volume;
+        })
+    }, [volume]);
+
+    useEffect(()=>{
+
+
+        return onlyIfExists(element=>{
+            
+
+            const sendPaused = ()=>{
+                remoteUpdate({pause:true});
+            }
+
+            const onLoadError = () =>{ 
+                element.load();
+            }
+
+            const events = ["pause", "ended"];
+
+            element.addEventListener('error', onLoadError);
+            events.forEach(eventName => element.addEventListener(eventName, sendPaused));
+            return ()=>{
+                element.removeEventListener('error', onLoadError);
+                events.forEach(eventName => element.removeEventListener(eventName, sendPaused));
+            }
+        })
+
+    }, [type]);
+
+    const props = useMemo(() => ({
+        className: "w-full h-full object-contain",
+        key: currentFileId,
+        controls: false,
+        ref: elementRef as RefObject<any>,
+        src: source
+    }), [currentFileId]);
+
+    if (type == 'video') {
+        return <video {...props}/>
+    } else if (type == 'audio') {
+        return <audio {...props}/>
+    }
+}
+
+//#region Old players
+/*const AudioContent = ({socket}: {socket:Socket|null}) => {
     const { currentFileId, currentTime, pause, volume } = usePlaybackManagerContext();
     const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -95,8 +202,6 @@ const AudioContent = ({socket}: {socket:Socket|null}) => {
         className="w-full h-full object-contain"
         controls={false} />;
 };
-
-
 const VideoContent = ({ socket }: { socket: Socket | null }) => {
 
     const { currentFileId, currentTime, pause, volume } = usePlaybackManagerContext();
@@ -152,12 +257,10 @@ const VideoContent = ({ socket }: { socket: Socket | null }) => {
         className="w-full h-full object-contain"
         controls={false}>
     </video>
-}
+}*/
+//#endregion 
 
 export function ViewContent() {
-
-    const socket = useSocket('viewer');
-
     const { currentFileId, blur, brightness, contrast, opacity, saturation } = usePlaybackManagerContext();
 
     const [contentType, setContentType] = useState<'picture' | 'video' | 'audio' | ''>("");
@@ -188,20 +291,16 @@ export function ViewContent() {
     }, [query.data]);
 
 
-    const content = useMemo(() => {
-        if (contentType === "picture") {
-            return <PictureContent />;
-        }
+    let content = null;
 
-        if (contentType === "video") {
-            return <VideoContent socket={socket} />;
-        }
+    if (contentType === "picture") {
+        content = <PictureContent />;
+    }
 
-        if (contentType === "audio") {
-            return <AudioContent socket={socket} />;
-        }
-        
-    }, [contentType]);
+    if (contentType === 'audio' || contentType === 'video') {
+        content = <PlayableContent key={contentType} type={contentType}/>
+    }
+    
 
     return (
         <div

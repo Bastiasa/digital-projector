@@ -13,11 +13,13 @@ export class FileStreamingService {
     }
 
     getFile(fileId:string,) {
-        const filePath = this.folders.getFilePath(fileId);
+        const file = this.folders.getFilePath(fileId);
 
-        if (!filePath) {
+        if (!file) {
             return;
         }
+
+        const filePath = file.getPath();
 
         return {
             stream: 

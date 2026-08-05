@@ -90,7 +90,7 @@ const Files = ({ folderId, folderDataQuery }: { folderId: number, folderDataQuer
 
                                         </CardSection>
 
-                                        <Text className="text-1xl! sm:text-sm!" mt={16}>{fileName}</Text>
+                                        <Text className="text-1xl! sm:text-sm!" mt={16}>{fileName}</Text> 
                                     </Card>
                                 </GridCol>
                             );
@@ -136,46 +136,42 @@ export default function FolderPage() {
         <div className="">
 
             <PageTitle>Digital Projector | Folder {folderDataQuery.data?.success ? folderDataQuery.data.data.path : folderId.toString()}</PageTitle>
+            
+            <Flex direction={'column'}>
+                <AdminHeader>
+                    <Group className="w-full mx-auto max-w-[1000px]">
+                        <ActionIcon onClick={() => {
+                            navigate('/admin')
+                        }}>
+                            <IconChevronLeft />
+                        </ActionIcon>
 
-            <PlaybackManagerProvider>
-                <AdminProvider>
-                    <Flex direction={'column'}>
-                        <AdminHeader>
-                            <Group className="w-full mx-auto max-w-[1000px]">
-                                <ActionIcon onClick={() => {
-                                    navigate('/admin')
-                                }}>
-                                    <IconChevronLeft />
-                                </ActionIcon>
+                        <Title
+                            flex={1}
+                            order={2}>
+                            {folderDataQuery.data?.success ?
+                                folderDataQuery.data.data.path
+                                : folderId}
+                        </Title>
 
-                                <Title
-                                    flex={1}
-                                    order={2}>
-                                    {folderDataQuery.data?.success ?
-                                        folderDataQuery.data.data.path
-                                        : folderId}
-                                </Title>
+                        <ActionIcon 
+                            loading={folderDataQuery.isFetching}
+                            onClick={() => folderDataQuery.refetch()}>
+                            <IconRefresh />
+                        </ActionIcon>
+                    </Group>
+                </AdminHeader>
 
-                                <ActionIcon 
-                                    loading={folderDataQuery.isFetching}
-                                    onClick={() => folderDataQuery.refetch()}>
-                                    <IconRefresh />
-                                </ActionIcon>
-                            </Group>
-                        </AdminHeader>
+                <div className="py-4"></div>
 
-                        <div className="py-4"></div>
+                <Files
+                    folderId={folderId}
+                    folderDataQuery={folderDataQuery} />
 
-                        <Files
-                            folderId={folderId}
-                            folderDataQuery={folderDataQuery} />
+                <div className="py-20"></div>
+            </Flex>
 
-                        <div className="py-20"></div>
-                    </Flex>
-
-                    <PlaybackPanel />
-                </AdminProvider>
-            </PlaybackManagerProvider>
+            <PlaybackPanel />
 
         </div>
     );

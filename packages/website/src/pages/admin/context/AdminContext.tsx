@@ -4,10 +4,7 @@ import { useAdminSocket } from "../hooks/useAdminSocket";
 import type { PlaybackManagerContextType } from "../../../context/PlaybackManagerContext";
 
 
-type AdminContextType = {
-    socket: Socket | null;
-    syncUpdate: (data: Partial<Omit<PlaybackManagerContextType, 'set'>>) => void;
-}
+type AdminContextType = ReturnType<typeof useAdminSocket>;
 
 const AdminContext = createContext<AdminContextType | null>(null);
 

@@ -2,12 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { io, type Socket } from 'socket.io-client'
 import { usePlaybackManagerContext } from '../context/PlaybackManagerContext';
 
-export const useSocket = (role: 'admin' | 'viewer') => {
-
-
+export const useSocket = (role: string) => {
 
     const [socket, setSocket] = useState<Socket | null>(null);
-    const { update } = usePlaybackManagerContext();
 
     const connectSocket = useCallback(() => {
 
@@ -24,11 +21,6 @@ export const useSocket = (role: 'admin' | 'viewer') => {
         });
     }, []);
 
-    const onUpdate = (data: any) => {
-        update(data);
-        console.log("update from server: ", data);
-    }
-
     const onClosed = () => {
         console.log("socket closed");
     }
@@ -42,12 +34,10 @@ export const useSocket = (role: 'admin' | 'viewer') => {
             return;
         }
 
-        socket.on('update', onUpdate);
         socket.on('disconnect', onClosed);
         socket.on('connect', onOpen);
 
         return () => {
-            socket.off('update', onUpdate);
             socket.off('disconnect', onClosed);
             socket.off('connect', onOpen);
             socket.disconnect();

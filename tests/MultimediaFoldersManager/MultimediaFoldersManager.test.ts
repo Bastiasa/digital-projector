@@ -8,6 +8,7 @@ import {vi, it, describe, expect, beforeEach} from 'vitest';
 import { join } from 'path';
 import { DataManager } from '@/electron/singletons/dataManager.ts';
 import { MediaIndexMock } from './MediaIndex.test.ts';
+import { FoldersManager } from '@/electron/classes/MultimediaFoldersManager/FoldersManager.ts';
 
 const EXAMPLE_FOLDER_PATH = join(
     __dirname,
@@ -36,14 +37,7 @@ describe("MultimediaFoldersManager", () => {
 
         
     });
-
-    it('duplicates folders map', ()=>{
-        const folders = manager.getFolders();
-        folders.set(99, "EmptyFolder");
-        
-        expect(manager.getFolders().has(99)).toBeFalsy();
-    });
-
+    
     it('returns null when previous file id receives null', () => {
         expect(
             manager.getPreviousIdFileFrom(null)
@@ -91,7 +85,7 @@ describe("MultimediaFoldersManager", () => {
         
         expect(picker.pick).toHaveBeenCalledWith(null);
 
-        const folderId = DataManager.get<number>(manager.FOLDER_ID_KEY, 0) ?? 0;
+        const folderId = DataManager.get<number>(FoldersManager.FOLDER_ID_KEY, 0) ?? 0;
 
         console.log("Folder ID", folderId)
 

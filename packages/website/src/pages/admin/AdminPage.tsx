@@ -136,11 +136,8 @@ export default function AdminPage() {
                             errorMessage
                 }
 
-                <PlaybackManagerProvider>
-                    <AdminProvider>
-                        <PlaybackPanel />
-                    </AdminProvider>
-                </PlaybackManagerProvider>
+                
+                <PlaybackPanel />
 
             </Stack>
 

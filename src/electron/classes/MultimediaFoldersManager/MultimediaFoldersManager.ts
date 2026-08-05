@@ -5,6 +5,8 @@ import { FolderPicker } from "./FolderPicker.js";
 import { MediaIndex } from "./MediaIndex.js";
 import { createLogger } from "../../utils/logger.js";
 import { DataManager } from "../../singletons/dataManager.js";
+import { FoldersManager } from "./FoldersManager.js";
+import { IndexManager } from "./IndexManager.js";
 
 const {
     logInfo,
@@ -23,13 +25,9 @@ export type FolderFile = {
 
 
 export class MultiFoldersManager {
-
-    public readonly FOLDER_ID_KEY = "IDS.MULTIMEDIA_FOLDERS_MANAGER";
-
-    private folders: Map<number, string> = new Map();
-
+    
     constructor(
-        private index = new MediaIndex(),
+        private foldersManager = new FoldersManager(),
         private scanner = new FileScanner(),
         private repository = new FolderRepository(),
         private folderPicker = new FolderPicker()
@@ -38,23 +36,21 @@ export class MultiFoldersManager {
 
             logInfo('Initializating...');
 
-            logInfo('Loading last data...');
+            logInfo('Loading saved folders...');
 
-            this.folders = this.repository.load();
+            const loadedFolders = this.repository.load();
 
-            for (const [folderId, folderPath] of Array.from(this.folders.entries())) {
-                const files = this.scanner.getFiles(folderPath);
-
-                if (files) {
-                    this.index.addFiles(
-                        files.map(sFile=>({
-                            folderId,
-                            ...sFile,
-                        }))
-                    );
-                }
+            if (!loadedFolders) {
+                logInfo("There are no folders saved.");
+                return;
             }
 
+            if (loadedFolders !instanceof Array) {
+                logWarn("Saved folders aren't an array:\n", loadedFolders);
+                return;
+            }
+
+            this.foldersManager.loadFoldersRaw(loadedFolders);
             logInfo('Last data Loaded successfully');
 
         } catch (error) {
@@ -64,16 +60,22 @@ export class MultiFoldersManager {
         }
     }
 
-    public getFolders() {
-        return new Map(this.folders);
+    private saveFolders() {
+        this.repository.save(
+            this.foldersManager.getFoldersRaw()
+        );
     }
 
-    private alreadyHas(folder: string) {
-        return Array.from(this.folders.values()).findIndex(v => v === folder) >= 0;
+    public getFolders() {
+        return this.foldersManager.getFolders();
+    }
+
+    public getFoldersRaw() {
+        return this.foldersManager.getFoldersRaw();
     }
 
     public getFilePath(fileId: string) {
-        return this.index.getFilePath(fileId, this.folders);
+        return this.foldersManager.getFile(fileId);
     }
 
     public async pickFolder(window: BrowserWindow): Promise<{ id: number, folder: string } | undefined> {
@@ -88,55 +90,38 @@ export class MultiFoldersManager {
             return;
         }
         
-        if (this.alreadyHas(selectedFolder)) {
-            logWarn(`Folder ${selectedFolder} was already registered.`);
+        logInfo("Registering folder...");
+        const folder = this.foldersManager.addFolder(selectedFolder);
+
+        if (!folder) {
             return;
         }
 
-        const id = DataManager.getNextId(this.FOLDER_ID_KEY);
+        logInfo(`Folder id: ${folder.id}.`);
 
-        logInfo(`Folder id: ${id}.`);
-
-        this.folders.set(
-            id,
-            selectedFolder
-        );
-
-        const folderFiles = 
-            this.scanner.getFiles(selectedFolder)
-                .map((f)=>({
-                    ...f,
-                    folderId: id
-                }));
-
-        logInfo("Folder files: ", folderFiles);
-
-        this.repository.save(this.folders);
-        this.index.addFiles(folderFiles);
+        this.saveFolders();
 
         return {
             folder: selectedFolder,
-            id
+            id: folder.id
         };
     }
 
     public async removeFolder(id: number) {
-        logInfo(`Removing folder: ${id}`);
-        this.folders.delete(id);
-        this.index.removeFolder(id);
-        this.repository.save(this.folders);
+        logInfo(`Folder removed: ${id}`);
+        this.foldersManager.removeFolder(id);
+        this.saveFolders();
     }
 
-    public getFolderFiles(id: number): FileData[] | undefined {
+    public getFolderFiles(id: number) {
 
-        if (!this.folders.has(id)) {
+        const folder = this.foldersManager.getFolder(id);
+
+        if (!folder) {
             return;
         }
-
-        const folderPath = this.folders.get(id)!;
-        const fileList = this.scanner.getFiles(folderPath);
-
-        return fileList.sort((a, b) => a.fileName.localeCompare(b.fileName));
+        
+        return folder.getFiles();
     }
 
     public getPreviousIdFileFrom(id: string | null) {
@@ -145,7 +130,12 @@ export class MultiFoldersManager {
             return null;
         }
 
-        return this.index.getPreviousId(id);
+        const files = this.foldersManager.getFiles();
+        const indexManager = new IndexManager(files);
+
+        return indexManager.getIndexValue(
+            indexManager.getPreviousIndex(id)
+        );
     }
 
     public getNextIdFileFrom(id: string | null) {
@@ -154,6 +144,11 @@ export class MultiFoldersManager {
             return null;
         }
 
-        return this.index.getNextId(id);
+        const files = this.foldersManager.getFiles();
+        const indexManager = new IndexManager(files);
+
+        return indexManager.getIndexValue(
+            indexManager.getNextIndex(id)
+        );
     }
 }

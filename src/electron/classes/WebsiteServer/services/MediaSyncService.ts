@@ -42,7 +42,7 @@ export class MediaSyncService {
         }
 
         this.mediaState.update({
-            currentFileId: prev,
+            currentFileId: prev.id,
             currentTime: 0,
             pause: false
         });
@@ -62,7 +62,7 @@ export class MediaSyncService {
         }
 
         this.mediaState.update({
-            currentFileId: next,
+            currentFileId: next.id,
             currentTime: 0,
             pause: false
         });

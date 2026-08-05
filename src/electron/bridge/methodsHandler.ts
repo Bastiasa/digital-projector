@@ -35,7 +35,7 @@ export const handleBridgeMethods = (
     });
 
     handleMethod('fetchMultimediaFolders', async () => {
-        return folders.getFolders();
+        return new Map(folders.getFoldersRaw());
     });
 
     handleMethod('setFields', (fields) => {

@@ -9,7 +9,8 @@ import { FolderController } from "./controllers/FolderController.js";
 import { FileController } from "./controllers/FileController.js";
 
 const {
-    logError
+    logError,
+    logInfo
 } = createLogger("App/WebsiteServer/RouterRegister");
 
 export class RouteRegister {
@@ -26,19 +27,29 @@ export class RouteRegister {
         app:FastifyInstance
     ) {
         app.get('/folders', (req, reply) => {
-            reply.send(
-                {
-                    success: true,
-                    data: Array.from(this.foldersManager.getFolders().entries())
-                }
-            );
+
+            try {
+                const result = reply.send(
+                            {
+                                success: true,
+                                data: this.foldersManager.getFoldersRaw()
+                            }
+                        );
+                logInfo("GET /folders")
+                return result;
+            } catch(error) {
+                logError("Error in folders request: \n", error);
+            }
+       
         });
 
         app.get("/folder/:id", (req,reply) => {
             try {
-                return this.folderController.getFolder(req,reply)
+                const result = this.folderController.getFolder(req,reply)
+                logInfo(`${req.url} GET`);
+                return result;
             } catch(err) {
-                logError(`Error in folder controller: `, err);
+                logError(`Error in FolderController: \n`, err);
                 reply.status(500).send({
                     error: "Internal server error"
                 });
@@ -46,9 +57,11 @@ export class RouteRegister {
         });
         app.get("/file/:id", (req, reply)=> {
             try {
-                return this.fileController.getFile(req, reply);
+                const result = this.fileController.getFile(req, reply);;
+                logInfo(`${req.url} GET`);
+                return result
             } catch(err) {
-                logError(`Error in file controller: `, err);
+                logError(`Error in FileController: `, err);
                 reply.status(500).send({
                     error: "Internal server error"
                 });

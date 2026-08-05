@@ -131,43 +131,39 @@ export default function SettingsPage() {
 
 
     return (
-        <PlaybackManagerProvider>
-            <AdminProvider>
-                <Stack
-                    style={{
-                        gap: "20px"
-                    }}
-                    className="w-full max-w-250 mx-auto my-12 px-6">
-                    <Group>
-                        <ActionIcon onClick={() => {
-                            history.back();
-                        }}>
-                            <IconChevronLeft />
-                        </ActionIcon>
+        <Stack
+            style={{
+                gap: "20px"
+            }}
+            className="w-full max-w-250 mx-auto my-12 px-6">
+            <Group>
+                <ActionIcon onClick={() => {
+                    history.back();
+                }}>
+                    <IconChevronLeft />
+                </ActionIcon>
 
-                        <Title>
-                            Parameters & Settings
-                        </Title>
-                    </Group>
+                <Title>
+                    Parameters & Settings
+                </Title>
+            </Group>
 
-                    <Title order={2}>
-                        Image Parameters
-                    </Title>
+            <Title order={2}>
+                Image Parameters
+            </Title>
 
-                    <ImageParameters />
+            <ImageParameters />
 
-                    <Title order={2}>
-                        Audio Parameters
-                    </Title>
+            <Title order={2}>
+                Audio Parameters
+            </Title>
 
-                    <AudioParameters />
+            <AudioParameters />
 
 
 
 
 
-                </Stack>
-            </AdminProvider>
-        </PlaybackManagerProvider>
+        </Stack>
     );
 }

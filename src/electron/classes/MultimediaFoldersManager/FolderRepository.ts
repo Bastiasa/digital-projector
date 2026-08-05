@@ -3,7 +3,7 @@ import { DataManager } from "../../singletons/dataManager.js";
 
 export class FolderRepository {
 
-    save(data: Map<number, string>) {
+    save(data: [number, string][]) {
         const arrayData = Array.from(data.entries());
 
         DataManager.store(
@@ -19,6 +19,6 @@ export class FolderRepository {
             []
         );
 
-        return new Map(folders ?? []);
+        return folders;
     }
 }

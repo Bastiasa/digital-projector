@@ -33,9 +33,18 @@ export class FolderController {
                 });
         }
 
+        const files = folder.getFiles().map(file => ({
+            fileName: file.fileName,
+            id: file.id
+        }));
+
         return reply.send({
             success:true,
-            data: folder
+            data: {
+                files,
+                id: folderId,
+                path: folder.path
+            }
         } satisfies GetFolderResponse)
     }
 }

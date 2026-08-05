@@ -10,18 +10,6 @@ export class FolderService {
     }
 
     getFolder(id:number) {
-        const files = this.folders.getFolderFiles(id);
-        const path = this.folders.getFolders().get(id);
-
-        if (!files || !path) {
-            return null;
-        }
-
-
-        return {
-            id,
-            path, 
-            files
-        } satisfies GetFolderResponse['data'];
+        return this.folders.getFolders().get(id);
     }
 }

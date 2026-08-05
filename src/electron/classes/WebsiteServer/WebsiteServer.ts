@@ -191,8 +191,13 @@ export class WebsiteServer {
 
     public async stop() {
         logInfo("Stopping server...");
-        await this.io.close();
+        
         this.app.server.closeAllConnections();
+        logInfo("All connections closed.");
+
+        await this.io.close();
+        logInfo("Socke.io server closed.");
         await this.app.close();
+        logInfo("Fastify server closed.");
     }
 }

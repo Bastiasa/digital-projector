@@ -12,11 +12,11 @@ describe("MultimediaFoldersManager/FolderRepository", () => {
 
     const repository = new FolderRepository();
 
-    const folders = new Map([
+    const folders: [number, string][] = [
         [122, "/videos"],
         [32, "/music"],
         [59, "/pictures"],
-    ]);
+    ];
 
     repository.save(folders);
 
