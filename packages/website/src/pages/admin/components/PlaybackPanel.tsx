@@ -1,10 +1,11 @@
 import { ActionIcon, Badge, Group, Paper, Slider, Stack, Title } from "@mantine/core";
 import { IconAdjustments, IconAdjustmentsFilled, IconCrossFilled, IconEditFilled, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerTrackNextFilled, IconPlayerTrackPrevFilled, IconSettingsFilled, IconXFilled } from "@tabler/icons-react";
 import { usePlaybackManagerContext } from "../../../context/PlaybackManagerContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentProps, type DOMAttributes } from "react";
 import { formatTime } from "../../../formatTime";
 import { useAdminContext } from "../context/AdminContext";
 import { useNavigate } from "react-router-dom";
+import { useMediaDuration } from "../hooks/useMediaDuration";
 
 export function PlaybackPanel() {
 
@@ -13,39 +14,19 @@ export function PlaybackPanel() {
     const {
         pause,
         currentTime,
-        currentFileId,
-        update
+        currentFileId
     } = usePlaybackManagerContext();
 
     const [isSeeking, setSeeking] = useState(false);
     const [seekingValue, setSeekingValue] = useState<number>(0);
-    const [duration, setDuration] = useState<number>(100);
+    
+    const duration = useMediaDuration(`/file/${currentFileId}`);
 
     const [fileName, setFileName] = useState<string | null>(null);
     const [mimeType, setMimeType] = useState<string | null>(null);
 
     const [isPlayable, setIsPlayable] = useState<boolean>(false);
 
-    const audioElementRef = useRef<HTMLAudioElement>(null);
-
-    useEffect(() => {
-
-        const id = setInterval(() => {
-
-            if (isSeeking) {
-                return;
-            }
-
-            update({
-                currentTime: Math.min(!pause ? currentTime + 1 : currentTime, duration)
-            });
-
-        }, 1000);
-
-        return () => {
-            clearInterval(id);
-        }
-    }, [currentTime, isSeeking]);
 
     useEffect(() => {
 
@@ -54,18 +35,6 @@ export function PlaybackPanel() {
             return;
         }
 
-        if (!audioElementRef.current) {
-            setFileName(null);
-            return;
-        }
-
-        const onMetadataLoaded = () => {
-            setDuration(audioElement.duration);
-            console.log("media duration: ", audioElement.duration)
-        }
-
-        const audioElement = audioElementRef.current;
-        let listenerAdded = false;
 
         fetch(`/file/${currentFileId}`, { method: "HEAD" })
             .then(res => {
@@ -92,18 +61,7 @@ export function PlaybackPanel() {
 
                 if (!contentType.startsWith("video") && !contentType.startsWith("audio"))
                     return;
-
-                audioElement.addEventListener('loadedmetadata', onMetadataLoaded);
-                audioElement.src = `/file/${currentFileId}`;
-                listenerAdded = true;
-            })
-
-
-        return () => {
-            if (!listenerAdded)
-                return;
-            audioElement.removeEventListener('loadedmetadata', onMetadataLoaded);
-        }
+            });
 
     }, [currentFileId]);
 
@@ -116,6 +74,7 @@ export function PlaybackPanel() {
     const onPrevClicked = () => {
         socket?.emit('prev');
     };
+
 
     return (
         <Paper className="border-t border-t-blue-500 fixed bottom-0 left-0 right-0 z-300 py-4 px-8">
@@ -144,6 +103,7 @@ export function PlaybackPanel() {
                     }
 
                     <Title
+                        translate="no"
                         title={fileName ?? ""}
                         className="text-nowrap! text-ellipsis overflow-hidden"
                         flex={1}
@@ -181,6 +141,7 @@ export function PlaybackPanel() {
                         onTouchStart={() => {
                             setSeeking(true);
                         }}
+                        
                         className="w-0 flex-1"
                         size={'xl'} />}
 
@@ -220,9 +181,6 @@ export function PlaybackPanel() {
 
 
             </Stack>
-            <audio
-                hidden
-                ref={audioElementRef} />
         </Paper>
     );
 
