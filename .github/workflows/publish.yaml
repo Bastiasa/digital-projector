@@ -41,7 +41,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: dist/*.{exe,nsis}
+          path: | 
+            dist/*.nsis
+            dist/*.exe
 
   release-mac:
     runs-on: macos-latest
@@ -90,6 +92,7 @@ jobs:
         run: |
           gh release create "v$VERSION" \
             dist/*.exe \
+            dist/*.nsis \
             dist/*.AppImage \
             dist/*.dmg \
             --title "v$VERSION" \
