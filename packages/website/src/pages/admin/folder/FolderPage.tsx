@@ -90,7 +90,7 @@ const Files = ({ folderId, folderDataQuery }: { folderId: number, folderDataQuer
 
                                         </CardSection>
 
-                                        <Text className="text-1xl! sm:text-sm!" mt={16}>{fileName}</Text> 
+                                        <Text translate="no" className="text-1xl! sm:text-sm!" mt={16}>{fileName}</Text> 
                                     </Card>
                                 </GridCol>
                             );
@@ -170,9 +170,6 @@ export default function FolderPage() {
 
                 <div className="py-20"></div>
             </Flex>
-
-            <PlaybackPanel />
-
         </div>
     );
 }

@@ -2,6 +2,7 @@ import { createReadStream } from "fs";
 import type { MultiFoldersManager } from "../../MultimediaFoldersManager/MultimediaFoldersManager.js";
 import { lookup } from "mime-types";
 import path from "path";
+import { FoundFileType } from "../../MultimediaFoldersManager/FoldersManager.js";
 
 export class FileStreamingService {
 
@@ -12,11 +13,10 @@ export class FileStreamingService {
         
     }
 
-    getFile(fileId:string,) {
-        const file = this.folders.getFilePath(fileId);
-
+    getFileStream(file?:FoundFileType) {
+        
         if (!file) {
-            return;
+            return {};
         }
 
         const filePath = file.getPath();

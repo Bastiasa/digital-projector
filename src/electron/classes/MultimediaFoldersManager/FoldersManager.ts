@@ -147,3 +147,6 @@ export class FoldersManager {
         return new Map(rawFiles);
     }
 }
+
+export type FolderContainerType = FolderContainer;
+export type FoundFileType = FoundFile

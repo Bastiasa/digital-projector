@@ -18,7 +18,12 @@ const FolderElement = ({ folderId, path }: { folderId: number, path: string }) =
         <Card withBorder>
             <Grid>
                 <GridCol span={{ xs: 12, sm: 8 }}>
-                    <Text style={{ wordBreak: 'keep-all' }} className="text-ellipsis overflow-hidden text-nowrap">{path}</Text>
+                    <Text
+                        translate="no" 
+                        style={{ wordBreak: 'keep-all' }} 
+                        className="text-ellipsis overflow-hidden text-nowrap">
+                            {path}
+                    </Text>
                 </GridCol>
 
                 <GridCol span={{ xs: 12, sm: 4 }}>
@@ -56,7 +61,6 @@ export default function AdminPage() {
 
     const errorMessage = (
         <div className="flex items-center absolute justify-center inset-0">
-            <PlaybackManagerProvider>
                 <Card withBorder>
                     <Stack>
                         <Text>
@@ -68,7 +72,6 @@ export default function AdminPage() {
                         </Button>
                     </Stack>
                 </Card>
-            </PlaybackManagerProvider>
         </div>
     );
 
@@ -135,9 +138,6 @@ export default function AdminPage() {
 
                             errorMessage
                 }
-
-                
-                <PlaybackPanel />
 
             </Stack>
 

@@ -26,8 +26,17 @@ export const handleBridgeMethods = (
         shell.openExternal(url);
     });
 
-    handleMethod('pickMultimediaFolder', () => {
-        return folders.pickFolder(window);
+    handleMethod('pickMultimediaFolder', async () => {
+        const pickedFolder = await folders.pickFolder(window);
+
+        if (!pickedFolder) {
+            return;
+        }
+
+        return {
+            folder: pickedFolder.path,
+            id: pickedFolder.id
+        };
     });
 
     handleMethod('deleteMultimediaFolder', (id) => {

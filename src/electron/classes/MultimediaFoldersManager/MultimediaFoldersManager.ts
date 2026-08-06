@@ -14,10 +14,6 @@ const {
     logWarn
 } = createLogger("Singletons/MultimediaFoldersManager");
 
-type FileData = {
-    fileName: string,
-    id: string
-};
 
 export type FolderFile = {
     folderId:number;
@@ -27,10 +23,12 @@ export type FolderFile = {
 export class MultiFoldersManager {
     
     constructor(
-        private foldersManager = new FoldersManager(),
-        private scanner = new FileScanner(),
+        scanner = new FileScanner(), 
+        private foldersManager = new FoldersManager(scanner),
         private repository = new FolderRepository(),
-        private folderPicker = new FolderPicker()
+        private folderPicker = new FolderPicker(),
+        private createIndexManager = () => new IndexManager(this.foldersManager.getFiles())
+
     ) {
         try {
 
@@ -45,13 +43,13 @@ export class MultiFoldersManager {
                 return;
             }
 
-            if (loadedFolders !instanceof Array) {
-                logWarn("Saved folders aren't an array:\n", loadedFolders);
+            if (!(loadedFolders instanceof Array)) {
+                logWarn(`Saved folders aren't an array:\n`, loadedFolders);
                 return;
             }
 
             this.foldersManager.loadFoldersRaw(loadedFolders);
-            logInfo('Last data Loaded successfully');
+            logInfo('Saved folders loaded successfully');
 
         } catch (error) {
             logError(`Couldn't iniatlize correctly: `, error);
@@ -61,9 +59,14 @@ export class MultiFoldersManager {
     }
 
     private saveFolders() {
-        this.repository.save(
-            this.foldersManager.getFoldersRaw()
-        );
+        try {
+            this.repository.save(
+                this.foldersManager.getFoldersRaw()
+            );    
+        } catch(err) {
+            logError(`Error saving folders:\n`, err);
+        }
+        
     }
 
     public getFolders() {
@@ -74,11 +77,7 @@ export class MultiFoldersManager {
         return this.foldersManager.getFoldersRaw();
     }
 
-    public getFilePath(fileId: string) {
-        return this.foldersManager.getFile(fileId);
-    }
-
-    public async pickFolder(window: BrowserWindow): Promise<{ id: number, folder: string } | undefined> {
+    public async pickFolder(window: BrowserWindow) {
 
         logInfo("Picking folder.");
 
@@ -101,13 +100,10 @@ export class MultiFoldersManager {
 
         this.saveFolders();
 
-        return {
-            folder: selectedFolder,
-            id: folder.id
-        };
+        return folder;
     }
 
-    public async removeFolder(id: number) {
+    public removeFolder(id: number) {
         logInfo(`Folder removed: ${id}`);
         this.foldersManager.removeFolder(id);
         this.saveFolders();
@@ -130,11 +126,10 @@ export class MultiFoldersManager {
             return null;
         }
 
-        const files = this.foldersManager.getFiles();
-        const indexManager = new IndexManager(files);
+        const index = this.createIndexManager();
 
-        return indexManager.getIndexValue(
-            indexManager.getPreviousIndex(id)
+        return index.getIndexValue(
+            index.getPreviousIndex(id)
         );
     }
 
@@ -144,11 +139,14 @@ export class MultiFoldersManager {
             return null;
         }
 
-        const files = this.foldersManager.getFiles();
-        const indexManager = new IndexManager(files);
+        const index = this.createIndexManager();
 
-        return indexManager.getIndexValue(
-            indexManager.getNextIndex(id)
+        return index.getIndexValue(
+            index.getNextIndex(id)
         );
+    }
+
+    public getFile(fileId:string) {
+        return this.foldersManager.getFile(fileId);
     }
 }

@@ -2,11 +2,16 @@ import { describe, expect, it } from "vitest";
 import { FileScanner} from '@/electron/classes/MultimediaFoldersManager/FileScanner.ts';
 import { makeSha256 } from "@/electron/utils/makeSha256.ts";
 import { join } from "path";
+import { createMocks } from "../../utils/createMocks.ts";
 
 const EXAMPLE_FOLDER = join(
     __dirname,
     "example_folder"
 );
+
+export const FileScannerMocks = ()=> createMocks(
+    'getFiles'
+)
 
 describe("FileScanner", ()=> {
 

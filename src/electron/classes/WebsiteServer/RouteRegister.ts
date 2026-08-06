@@ -55,9 +55,9 @@ export class RouteRegister {
                 });
             }
         });
-        app.get("/file/:id", (req, reply)=> {
+        app.get("/file/:id", async (req, reply)=> {
             try {
-                const result = this.fileController.getFile(req, reply);;
+                const result = await this.fileController.getFile(req, reply);;
                 logInfo(`${req.url} GET`);
                 return result
             } catch(err) {

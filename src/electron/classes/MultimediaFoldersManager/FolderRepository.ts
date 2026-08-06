@@ -4,11 +4,9 @@ import { DataManager } from "../../singletons/dataManager.js";
 export class FolderRepository {
 
     save(data: [number, string][]) {
-        const arrayData = Array.from(data.entries());
-
         DataManager.store(
             {
-                [GlobalConstants.SETTINGS_FIELDS.MULTIMEDIA_FOLDERS]: arrayData 
+                [GlobalConstants.SETTINGS_FIELDS.MULTIMEDIA_FOLDERS]: data 
             }
         );
     }
