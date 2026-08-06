@@ -24,5 +24,11 @@
         "target": "nsis",
         "icon": "icons/icon.ico",
         "artifactName": "Dp-Win-${version}.exe"
+    },
+
+    "mac": {
+        "target": "dmg",
+        "icon": "icons/icon.icns",
+        "artifactName": "Dd-MacOS-${version}.exe"
     }
 }

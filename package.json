@@ -34,6 +34,9 @@
     "dist:win": "npm run build && electron-builder build -w  --publish never",
     "only:dist:win": "electron-builder build -w",
 
+    "dist:mac": "npm run build && electron-builder build -m  --publish never",
+    "only:dist:mac": "electron-builder build -m  --publish never",
+
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest test"

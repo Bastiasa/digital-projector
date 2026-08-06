@@ -41,12 +41,33 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: dist/*.exe
+          path: dist/*.{exe,nsis}
 
+  release-mac:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm install
+
+      - run: npm run dist:win
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: dist/*.dmg
+  
   create-release:
     needs:
       - release-linux
       - release-windows
+      - release-mac
 
     runs-on: ubuntu-latest
 
@@ -70,5 +91,6 @@ jobs:
           gh release create "v$VERSION" \
             dist/*.exe \
             dist/*.AppImage \
+            dist/*.dmg \
             --title "v$VERSION" \
             --generate-notes
